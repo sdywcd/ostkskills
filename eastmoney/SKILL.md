@@ -46,7 +46,7 @@ Shows: Key financial indicators (PE, PB, ROE, etc.)
 ```bash
 python .trae/skills/eastmoney/em.py analyze 600519
 ```
-Displays: MA5/20/60, RSI, MACD signals, and a Buy/Sell/Hold recommendation score.
+Displays: MA5/20/60, RSI, MACD signals, Buy/Sell/Hold recommendation score, **and recent news headlines**.
 
 ### Search
 ```bash
@@ -54,6 +54,12 @@ python .trae/skills/eastmoney/em.py search "茅台"
 python .trae/skills/eastmoney/em.py search "腾讯"
 ```
 Search for stock codes by name.
+
+### News
+```bash
+python .trae/skills/eastmoney/em.py news 600519
+```
+Fetch recent news for a stock.
 
 ## Symbol Format
 

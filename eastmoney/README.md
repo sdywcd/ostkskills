@@ -50,11 +50,18 @@ python em.py analyze <symbol>
 - RSI (相对强弱指标)
 - MACD (平滑异同移动平均线)
 - 综合买卖建议 (BUY/SELL/HOLD)
+- 包含近期新闻标题
 
 ### Price (实时价格)
 ```bash
 python em.py price <symbol>
 ```
+
+### News (新闻)
+```bash
+python em.py news <symbol>
+```
+获取该股票最近 5 条新闻，并高亮正/负面关键词。
 
 ### Search (搜索)
 ```bash

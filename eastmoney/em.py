@@ -24,7 +24,7 @@ def get_symbol(args_list):
     """
     if not args_list:
         return None
-    commands = ['price', 'quote', 'history', 'fundamentals', 'search', 'analyze']
+    commands = ['price', 'quote', 'history', 'fundamentals', 'search', 'analyze', 'news']
     if args_list[0] in commands:
         if len(args_list) > 1:
             return args_list[1]
@@ -191,6 +191,9 @@ def cmd_analyze(symbol):
 
     except Exception as e:
         console.print(f"[red]Error analyzing: {e}[/red]")
+
+    # Fetch and show news
+    cmd_news(symbol, limit=3)
 
 def format_number(num):
     if num is None:
@@ -408,6 +411,48 @@ def cmd_search(query):
     except Exception as e:
         console.print(f"[red]Error searching: {e}[/red]")
 
+def cmd_news(symbol, limit=5):
+    """
+    Fetch and display recent news for the stock symbol.
+    """
+    try:
+        rprint(f"Fetching news for {symbol}...")
+        news_df = ak.stock_news_em(symbol=symbol)
+        
+        if news_df.empty:
+            rprint(f"[yellow]No news found for {symbol}.[/yellow]")
+            return
+            
+        # Select top N news
+        recent_news = news_df.head(limit)
+        
+        table = Table(title=f"Recent News for {symbol}")
+        table.add_column("Date", style="cyan")
+        table.add_column("Title", style="white")
+        # table.add_column("Link", style="blue") # Link might be too long
+        
+        for _, row in recent_news.iterrows():
+            # stock_news_em columns: 关键词, 新闻标题, 新闻内容, 发布时间, 文章来源, 新闻链接
+            date = row.get('发布时间', 'N/A')
+            title = row.get('新闻标题', 'N/A')
+            # link = row.get('新闻链接', '')
+            
+            # Simple keyword highlighting
+            title_colored = title
+            if any(x in title for x in ['涨', '利好', '增', '高', '红']):
+                title_colored = f"[green]{title}[/green]"
+            elif any(x in title for x in ['跌', '利空', '减', '低', '亏', '查']):
+                title_colored = f"[red]{title}[/red]"
+                
+            table.add_row(str(date), title_colored)
+            
+        console.print(table)
+        return recent_news # Return for potential use in analyze
+        
+    except Exception as e:
+        console.print(f"[red]Error fetching news: {e}[/red]")
+        return pd.DataFrame()
+
 def main():
     if len(sys.argv) < 2:
         console.print("[red]Usage: em.py <command> [symbol][/red]")
@@ -445,6 +490,8 @@ def main():
         cmd_search(arg)
     elif command == 'analyze':
         cmd_analyze(arg)
+    elif command == 'news':
+        cmd_news(arg)
 
 if __name__ == "__main__":
     main()
